@@ -1,0 +1,159 @@
+
+> visualisation_ui_api_automation@1.0.0 test
+> npx cucumber-js
+
+Video not available for scenario: Validate roles list API
+Toggling Show Suspended to: true
+Toggling Show Disabled to: true
+Found status for suspend.user+1773385143769@example.com: [DISABLED]
+Failures:
+
+1) Scenario: Create a new organization with manual provisioning # src/features/ui/superadmin_organizations.feature:8
+   ✔ Before # src/hooks/hooks.ts:16
+   ✔ Given I am authenticated as a Super Admin # src/steps/superadminSteps.ts:15
+   ✔ And I navigate to the Super Admin Dashboard # src/steps/superadminSteps.ts:33
+   ✔ Given I navigate to the Organizations page # src/steps/superadminSteps.ts:87
+   ✔ When I click on the "Create Organization" button # src/steps/superadminSteps.ts:92
+   ✖ And I fill in the organization info: # src/steps/superadminSteps.ts:97
+       | Field             | Value              |
+       | Organization Name | [Auto] Random ORG  |
+       | Organization Code | [Auto] COMPANY     |
+       | Description       | Automated Test ORG |
+       | Tenant Type       | Enterprise         |
+       | Provisioning Mode | Auto               |
+       | Platforms         | VIS, NFT, FT       |
+       locator.click: Element is not visible
+       Call log:
+       [2m  - waiting for locator('input[type="radio"][value="ENTERPRISE"]')[22m
+       [2m    - locator resolved to <input checked type="radio" name="tenant_type" value="ENTERPRISE"/>[22m
+       [2m  - attempting click action[22m
+       [2m    - scrolling into view if needed[22m
+
+           at OrganizationsPage.fillOrgInfo (/home/pratik/Documents/visualisation_UI_API_Automation/src/pages/OrganizationsPage.ts:51:27)
+           at async CustomWorld.<anonymous> (/home/pratik/Documents/visualisation_UI_API_Automation/src/steps/superadminSteps.ts:106:5)
+   - And I click Next on the organization modal # src/steps/superadminSteps.ts:116
+   - And I configure the feature flags: # src/steps/superadminSteps.ts:121
+       | Platform | Threads | Run Option | NLP  |
+       | NFT      | 3       | within     | -    |
+       | FT       | 2       | -          | true |
+   - And I click "Create Organization" to finish # src/steps/superadminSteps.ts:137
+   - Then the organization "[Auto] Random ORG" should be visible in the list # src/steps/superadminSteps.ts:142
+   ✔ After # src/hooks/hooks.ts:38
+       Attachment (image/png)
+       Attachment (text/plain): Trace saved at: /home/pratik/Documents/visualisation_UI_API_Automation/reports/traces/Create_a_new_organization_with_manual_provisioning.zip
+       Attachment (video/webm)
+
+2) Scenario: Create and Suspend an organization # src/features/ui/superadmin_organizations.feature:28
+   ✔ Before # src/hooks/hooks.ts:16
+   ✔ Given I am authenticated as a Super Admin # src/steps/superadminSteps.ts:15
+   ✔ And I navigate to the Super Admin Dashboard # src/steps/superadminSteps.ts:33
+   ✔ Given I navigate to the Organizations page # src/steps/superadminSteps.ts:87
+   ✔ When I click on the "Create Organization" button # src/steps/superadminSteps.ts:92
+   ✖ And I fill in the organization info: # src/steps/superadminSteps.ts:97
+       | Field             | Value               |
+       | Organization Name | [Auto] Suspend ORG  |
+       | Organization Code | [Auto] SUSP         |
+       | Description       | For suspension test |
+       | Tenant Type       | Enterprise          |
+       | Provisioning Mode | Auto                |
+       | Platforms         | VIS, NFT            |
+       locator.click: Element is not visible
+       Call log:
+       [2m  - waiting for locator('input[type="radio"][value="ENTERPRISE"]')[22m
+       [2m    - locator resolved to <input checked type="radio" name="tenant_type" value="ENTERPRISE"/>[22m
+       [2m  - attempting click action[22m
+       [2m    - scrolling into view if needed[22m
+
+           at OrganizationsPage.fillOrgInfo (/home/pratik/Documents/visualisation_UI_API_Automation/src/pages/OrganizationsPage.ts:51:27)
+           at async CustomWorld.<anonymous> (/home/pratik/Documents/visualisation_UI_API_Automation/src/steps/superadminSteps.ts:106:5)
+   - And I click Next on the organization modal # src/steps/superadminSteps.ts:116
+   - And I configure the feature flags: # src/steps/superadminSteps.ts:121
+       | Platform | Threads | Run Option | NLP |
+       | NFT      | 1       | within     | -   |
+   - And I click "Create Organization" to finish # src/steps/superadminSteps.ts:137
+   - Then the organization "[Auto] Suspend ORG" should be visible in the list # src/steps/superadminSteps.ts:142
+   - When I suspend the organization "[Auto] Suspend ORG" # src/steps/superadminSteps.ts:204
+   - And I toggle "Show suspended" organizations to "on" # src/steps/superadminSteps.ts:212
+   - Then the organization "[Auto] Suspend ORG" should have status "SUSPENDED" # src/steps/superadminSteps.ts:217
+   ✔ After # src/hooks/hooks.ts:38
+       Attachment (image/png)
+       Attachment (text/plain): Trace saved at: /home/pratik/Documents/visualisation_UI_API_Automation/reports/traces/Create_and_Suspend_an_organization.zip
+       Attachment (video/webm)
+
+3) Scenario: Filter Organizations by status # src/features/ui/superadmin_organizations.feature:50
+   ✔ Before # src/hooks/hooks.ts:16
+   ✔ Given I am authenticated as a Super Admin # src/steps/superadminSteps.ts:15
+   ✔ And I navigate to the Super Admin Dashboard # src/steps/superadminSteps.ts:33
+   ✔ Given I navigate to the Organizations page # src/steps/superadminSteps.ts:87
+   ✔ When I toggle "Show suspended" organizations to "on" # src/steps/superadminSteps.ts:212
+   ✖ Then I should see suspended organizations in the list # src/steps/superadminSteps.ts:295
+       locator.waitFor: Timeout 10000ms exceeded.
+       Call log:
+       [2m  - waiting for locator('[class*="badge"], [class*="status"], [class*="chip"], [class*="tag"], td').filter({ hasText: /SUSPENDED/i }).first() to be visible[22m
+
+           at CustomWorld.<anonymous> (/home/pratik/Documents/visualisation_UI_API_Automation/src/steps/superadminSteps.ts:297:27)
+   ✔ After # src/hooks/hooks.ts:38
+       Attachment (image/png)
+       Attachment (text/plain): Trace saved at: /home/pratik/Documents/visualisation_UI_API_Automation/reports/traces/Filter_Organizations_by_status.zip
+       Attachment (video/webm)
+
+4) Scenario: Search for an organization by name # src/features/ui/superadmin_search.feature:8
+   ✔ Before # src/hooks/hooks.ts:16
+   ✔ Given I am authenticated as a Super Admin # src/steps/superadminSteps.ts:15
+   ✔ And I navigate to the Super Admin Dashboard # src/steps/superadminSteps.ts:33
+   ✔ Given I navigate to the Organizations page # src/steps/superadminSteps.ts:87
+   ✖ When I search for organization "QBurst" # src/steps/superadminSteps.ts:270
+       locator.waitFor: Timeout 15000ms exceeded.
+       Call log:
+       [2m  - waiting for locator('input[placeholder*="Search" i], input[type="search" i], input[aria-label*="search" i], .search-container input, .search-bar input').first() to be visible[22m
+
+           at CustomWorld.<anonymous> (/home/pratik/Documents/visualisation_UI_API_Automation/src/steps/superadminSteps.ts:273:24)
+   - Then the organization "QBurst" should be visible in the list # src/steps/superadminSteps.ts:142
+   ✔ After # src/hooks/hooks.ts:38
+       Attachment (image/png)
+       Attachment (text/plain): Trace saved at: /home/pratik/Documents/visualisation_UI_API_Automation/reports/traces/Search_for_an_organization_by_name.zip
+       Attachment (video/webm)
+
+5) Scenario: Search for a user by email # src/features/ui/superadmin_search.feature:13
+   ✔ Before # src/hooks/hooks.ts:16
+   ✔ Given I am authenticated as a Super Admin # src/steps/superadminSteps.ts:15
+   ✔ And I navigate to the Super Admin Dashboard # src/steps/superadminSteps.ts:33
+   ✔ Given I navigate to the Users page # src/steps/superadminSteps.ts:154
+   ✖ When I search for user "pratik.santhosh@qburst.com" # src/steps/superadminSteps.ts:283
+       locator.waitFor: Timeout 15000ms exceeded.
+       Call log:
+       [2m  - waiting for locator('input[placeholder*="Search" i], input[type="search" i], input[aria-label*="search" i], .search-container input, .search-bar input').first() to be visible[22m
+
+           at CustomWorld.<anonymous> (/home/pratik/Documents/visualisation_UI_API_Automation/src/steps/superadminSteps.ts:285:24)
+   - Then the user "pratik.santhosh@qburst.com" should be visible in the list # src/steps/superadminSteps.ts:193
+   ✔ After # src/hooks/hooks.ts:38
+       Attachment (image/png)
+       Attachment (text/plain): Trace saved at: /home/pratik/Documents/visualisation_UI_API_Automation/reports/traces/Search_for_a_user_by_email.zip
+       Attachment (video/webm)
+
+6) Scenario: Create a new normal user for a random organization # src/features/ui/superadmin_users.feature:9
+   ✔ Before # src/hooks/hooks.ts:16
+   ✔ Given I am authenticated as a Super Admin # src/steps/superadminSteps.ts:15
+   ✔ And I navigate to the Super Admin Dashboard # src/steps/superadminSteps.ts:33
+   ✔ Given I navigate to the Users page # src/steps/superadminSteps.ts:154
+   ✔ When I click on the "Create User" button # src/steps/superadminSteps.ts:159
+   ✔ And I fill in the user details: # src/steps/superadminSteps.ts:164
+       | Field | Value                             |
+       | Email | [Auto] pratik.santhosh@qburst.com |
+       | Name  | Automated Test User               |
+       | Role  | Normal User                       |
+   ✔ And I select a random organization for the user # src/steps/superadminSteps.ts:180
+   ✖ And I click "Create" to finish user creation # src/steps/superadminSteps.ts:188
+       Error: function timed out, ensure the promise resolves within 30000 milliseconds
+           at Timeout.<anonymous> (/home/pratik/Documents/visualisation_UI_API_Automation/node_modules/@cucumber/cucumber/src/time.ts:52:14)
+           at listOnTimeout (node:internal/timers:581:17)
+           at processTimers (node:internal/timers:519:7)
+   - Then the user "[Auto] pratik.santhosh@qburst.com" should be visible in the list # src/steps/superadminSteps.ts:193
+   ✔ After # src/hooks/hooks.ts:38
+       Attachment (image/png)
+       Attachment (text/plain): Trace saved at: /home/pratik/Documents/visualisation_UI_API_Automation/reports/traces/Create_a_new_normal_user_for_a_random_organization.zip
+       Attachment (video/webm)
+
+12 scenarios (6 failed, 6 passed)
+76 steps (6 failed, 14 skipped, 56 passed)
+2m31.344s (executing steps: 2m31.041s)

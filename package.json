@@ -1,0 +1,36 @@
+{
+  "name": "visualisation_ui_api_automation",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "npx cucumber-js",
+    "report": "node generate-report.js",
+    "login": "npx ts-node src/utils/login_manual.ts",
+    "codegen": "npx playwright codegen --load-storage=storageState.json https://admin.dev.global-portal.qburst.build/",
+    "codegen:high_ai": "npx playwright codegen --load-storage=storageState.json https://dev.global-portal.qburst.build/login",
+    "test:high_ai": "rm -rf reports/high_ai && mkdir -p reports/high_ai && date -u +%Y-%m-%dT%H:%M:%S > src/start-time.txt && npx cucumber-js --tags '@high_ai' --format json:reports/high_ai/cucumber-report.json; date -u +%Y-%m-%dT%H:%M:%S > src/end-time.txt",
+    "report:html": "npx ts-node --transpile-only src/helper/report/report.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@cucumber/cucumber": "^12.6.0",
+    "@playwright/test": "^1.58.1",
+    "@types/chai": "^5.2.3",
+    "@types/cucumber": "^6.0.1",
+    "@types/node": "^25.2.0",
+    "chai": "^6.2.2",
+    "cucumber-html-reporter": "^7.2.0",
+    "multiple-cucumber-html-reporter": "^3.10.0",
+    "playwright-bdd": "^8.4.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@types/axios": "^0.9.36",
+    "axios": "^1.13.4",
+    "dotenv": "^17.3.1"
+  }
+}
