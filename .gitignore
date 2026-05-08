@@ -1,0 +1,45 @@
+# ── Dependencies ──────────────────────────────────────────────
+node_modules/
+
+# ── Build output ───────────────────────────────────────────────
+dist/
+build/
+
+# ── Test Reports & Artifacts ───────────────────────────────────
+reports/
+test-results/
+playwright-report/
+*.html
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+!playwright.config.ts
+
+# ── Playwright state & traces ──────────────────────────────────
+storageState.json
+*.zip
+
+# ── Logs ───────────────────────────────────────────────────────
+*.log
+test_output.log
+src/start-time.txt
+src/end-time.txt
+
+# ── Environment secrets ────────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# ── OS clutter ────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── IDE / Editor ──────────────────────────────────────────────
+# Keep .vscode/settings.json (shared Cucumber extension config)
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
