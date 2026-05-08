@@ -22,9 +22,9 @@
     "@types/cucumber": "^6.0.1",
     "@types/node": "^25.2.0",
     "chai": "^6.2.2",
-    "cucumber-html-reporter": "^7.2.0",
+    "cucumber-html-reporter": "^6.0.0",
     "multiple-cucumber-html-reporter": "^3.10.0",
-    "playwright-bdd": "^8.4.2",
+    "playwright-bdd": "^8.2.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   },
