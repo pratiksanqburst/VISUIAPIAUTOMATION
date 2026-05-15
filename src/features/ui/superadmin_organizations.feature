@@ -51,3 +51,11 @@ Feature: Super Admin Organizations Creation
     Given I navigate to the Organizations page
     When I toggle "Show suspended" organizations to "on"
     Then I should see suspended organizations in the list
+
+  @high_ai @create_edit
+  Scenario: Create and Edit an organization
+    Given I navigate to the Organizations page
+    When I create a new organization with code "TESTEDIT" and manual provisioning
+    Then I should see the created organization in the list
+    When I edit that organization name to "Edited Test Org"
+    Then I should see the organization name updated to "Edited Test Org"

@@ -22,7 +22,7 @@ Feature: High AI Visualization Login
     And I login with invalid credentials
     Then I should see an error message "Invalid credentials"
 
-  @high_ai
+  @high_ai1
   Scenario: Verify login with empty fields
     When I open the High AI login page
     And I click Login without entering credentials

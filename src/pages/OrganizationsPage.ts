@@ -3,12 +3,12 @@ import { BasePage } from './BasePage';
 export class OrganizationsPage extends BasePage {
     private CREATE_ORG_BUTTON = 'button:has-text("Create Organization")';
     private SEARCH_INPUT = 'input[placeholder*="Search" i], .search-bar input, input[type="search"]';
-    
+
 
     private ORG_NAME_INPUT = 'input[placeholder="Acme Corporation"]';
     private ORG_CODE_INPUT = 'input[placeholder="ACME"]';
     private DESCRIPTION_INPUT = 'input[placeholder="Optional description"]';
-    private PROVISIONING_MODE_SELECT = 'select.form-input'; 
+    private PROVISIONING_MODE_SELECT = 'select.form-input';
     private PLATFORM_VIS_CHECKBOX = 'label:has-text("VIS")';
     private PLATFORM_NFT_CHECKBOX = 'label:has-text("NFT")';
     private PLATFORM_FT_CHECKBOX = 'label:has-text("FT")';
@@ -18,7 +18,7 @@ export class OrganizationsPage extends BasePage {
     private NFT_THREADS_INPUT = 'div:has(> label:has-text("NFT Platform")) input.form-input';
     private NFT_RUN_OPTION_WTHIN = 'label:has-text("Parallel execution within project") input';
     private NFT_RUN_OPTION_PER = 'label:has-text("Parallel execution per project") input';
-    
+
     private FT_THREADS_INPUT = 'div:has(> label:has-text("FT Platform")) input.form-input';
     private FT_NLP_CHECKBOX = 'label:has-text("NLP Based Test Creation") input';
     private FINAL_CREATE_BUTTON = 'button.btn-primary:has-text("Create Organization")';
@@ -36,15 +36,16 @@ export class OrganizationsPage extends BasePage {
         await this.page.waitForSelector('.modal', { state: 'visible' });
     }
 
-    async fillOrgInfo(details: { name: string, code: string, description?: string, provisioningMode: string, platforms: string[] }) {
+    async fillOrgInfo(details: { name: string, code: string, description?: string, provisioningMode?: string, platforms: string[] }) {
         await this.page.fill(this.ORG_NAME_INPUT, details.name);
         await this.page.fill(this.ORG_CODE_INPUT, details.code);
         if (details.description) {
             await this.page.fill(this.DESCRIPTION_INPUT, details.description);
         }
 
-
-        await this.page.selectOption(this.PROVISIONING_MODE_SELECT, { label: details.provisioningMode });
+        if (details.provisioningMode) {
+            await this.page.selectOption(this.PROVISIONING_MODE_SELECT, { label: details.provisioningMode });
+        }
 
         await this.page.waitForTimeout(1000);
         for (const platform of ['VIS', 'NFT', 'FT']) {
@@ -105,9 +106,9 @@ export class OrganizationsPage extends BasePage {
     async clickFinalCreate() {
         await this.page.waitForTimeout(2000);
         await this.page.getByRole('button', { name: 'Create Organization', exact: true }).click();
-        
+
         try {
-            await this.page.waitForSelector('.modal', { state: 'hidden', timeout: 15000 }); 
+            await this.page.waitForSelector('.modal', { state: 'hidden', timeout: 15000 });
         } catch (e) {
             console.log('Modal may not be hidden, continuing anyway...');
         }
@@ -165,5 +166,50 @@ export class OrganizationsPage extends BasePage {
         await searchInput.fill(name);
         await this.page.keyboard.press('Enter');
         await this.page.waitForLoadState('networkidle');
+    }
+
+    // Open edit modal for an organization by name
+    async openEditForOrganization(name: string) {
+        const row = this.page.locator('tr').filter({ hasText: name }).first();
+        await row.waitFor({ state: 'visible', timeout: 5000 });
+        const editBtn = row.getByRole('button', { name: '✏️' });
+        await editBtn.waitFor({ state: 'visible', timeout: 5000 });
+        await editBtn.click();
+        await this.page.waitForSelector('.modal', { state: 'visible', timeout: 5000 });
+    }
+
+    // Update organization name in edit modal (step 1)
+    async updateOrganizationName(newName: string) {
+        // In edit modal, find the name input - it's typically the first text input or labeled "Organization Name"
+        const modal = this.page.locator('.modal').first();
+        const nameInput = modal.locator('input[type="text"]').first();
+        await nameInput.waitFor({ state: 'visible', timeout: 5000 });
+        await nameInput.clear();
+        await nameInput.fill(newName);
+    }
+
+    // Click Next in edit modal to go to step 2 (Feature Flags)
+    async clickNextInEditModal() {
+        const modal = this.page.locator('.modal').first();
+        const nextBtn = modal.getByRole('button', { name: /Next/i });
+        await nextBtn.waitFor({ state: 'visible', timeout: 5000 });
+        await nextBtn.click();
+        await this.page.waitForTimeout(2000);
+    }
+
+    // Save changes in edit modal (step 2)
+    async saveOrganizationEdit() {
+        const saveBtn = this.page.getByRole('button', { name: 'Save Changes' });
+        await saveBtn.waitFor({ state: 'visible', timeout: 5000 });
+        await saveBtn.click();
+        await this.page.waitForSelector('.modal', { state: 'hidden', timeout: 10000 });
+        await this.page.waitForLoadState('networkidle');
+    }
+
+    // Verify organization name is visible in its row
+    async isOrganizationNameVisible(oldName: string, newName: string) {
+        const row = this.page.locator('tr').filter({ hasText: newName }).first();
+        await row.waitFor({ state: 'visible', timeout: 5000 });
+        return await row.locator(`text=${newName}`).isVisible();
     }
 }

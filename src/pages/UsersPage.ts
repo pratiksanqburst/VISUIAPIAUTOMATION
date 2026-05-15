@@ -3,7 +3,7 @@ import { BasePage } from './BasePage';
 export class UsersPage extends BasePage {
     private CREATE_USER_BUTTON = 'button:has-text("Create User")';
     private SEARCH_INPUT = 'input[placeholder*="Search" i], .search-bar input, input[type="search"]';
-    
+
 
     private EMAIL_INPUT = 'input[placeholder="user@example.com"]';
     private NAME_INPUT = 'input[placeholder="John Doe"]';
@@ -25,13 +25,20 @@ export class UsersPage extends BasePage {
     }
 
     async fillUserDetails(details: { email: string, name: string }) {
-        await this.page.fill(this.EMAIL_INPUT, details.email);
-        await this.page.fill(this.NAME_INPUT, details.name);
+        await this.page.getByRole('textbox', { name: 'user@example.com' }).fill(details.email);
+        await this.page.getByRole('textbox', { name: 'John Doe' }).fill(details.name);
+    }
+
+    async updateUserName(newName: string) {
+        const nameInput = this.page.getByRole('textbox', { name: 'John Doe' });
+        await nameInput.waitFor({ state: 'visible', timeout: 5000 });
+        await nameInput.clear();
+        await nameInput.fill(newName);
     }
 
     async selectOrganizationAndRole(org: string, role: string) {
-        await this.page.locator(this.ORG_SELECT).first().selectOption({ label: org });
-        await this.page.locator(this.ROLE_SELECT).nth(1).selectOption({ label: role });
+        await this.page.getByRole('combobox').first().selectOption(org);
+        await this.page.getByRole('combobox').nth(1).selectOption(role);
     }
 
     async getRandomOrganization() {
@@ -50,10 +57,10 @@ export class UsersPage extends BasePage {
 
     async clickCreate() {
         await this.page.waitForTimeout(2000);
-        const createBtn = this.page.locator(this.FINAL_CREATE_BUTTON).last();
+        const createBtn = this.page.getByRole('button', { name: 'Create', exact: true });
         await createBtn.waitFor({ state: 'visible', timeout: 5000 });
         await createBtn.click();
-        
+
         try {
             const continueBtn = this.page.getByRole('button', { name: 'Continue' });
             await continueBtn.waitFor({ state: 'visible', timeout: 15000 });
@@ -110,11 +117,37 @@ export class UsersPage extends BasePage {
 
     async searchUser(email: string) {
         console.log(`Searching for user: ${email}`);
-        const searchInput = this.page.locator(this.SEARCH_INPUT).first();
+        const searchInput = this.page.getByRole('textbox', { name: 'Search by name or email...' });
         await searchInput.waitFor({ state: 'visible', timeout: 5000 });
         await searchInput.fill('');
         await searchInput.fill(email);
-        await this.page.keyboard.press('Enter');
         await this.page.waitForLoadState('networkidle');
+    }
+
+    // Open edit modal for a user by email
+    async openEditForUser(email: string) {
+        const row = this.page.locator('tr').filter({ hasText: email }).first();
+        await row.waitFor({ state: 'visible', timeout: 5000 });
+        // Find the edit button within this specific row
+        const editBtn = row.getByRole('button', { name: '✏️' });
+        await editBtn.waitFor({ state: 'visible', timeout: 5000 });
+        await editBtn.click();
+        await this.page.waitForSelector('.modal', { state: 'visible', timeout: 5000 });
+    }
+
+    // Save changes in modal (handles Save/Update buttons)
+    async saveEdit() {
+        const saveBtn = this.page.getByRole('button', { name: 'Save Changes' });
+        await saveBtn.waitFor({ state: 'visible', timeout: 5000 });
+        await saveBtn.click();
+        await this.page.waitForSelector('.modal', { state: 'hidden', timeout: 10000 });
+        await this.page.waitForLoadState('networkidle');
+    }
+
+    // Verify that a user's row contains the given name
+    async isUserNameVisible(email: string, name: string) {
+        const row = this.page.locator('tr').filter({ hasText: email }).first();
+        await row.waitFor({ state: 'visible', timeout: 5000 });
+        return await row.locator(`text=${name}`).isVisible();
     }
 }
