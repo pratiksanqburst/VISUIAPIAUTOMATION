@@ -5,6 +5,7 @@ export class CustomWorld extends World {
     browser?: Browser;
     context?: BrowserContext;
     page?: Page;
+    kpiValues?: Record<string, string>;
 
     constructor(options: IWorldOptions) {
         super(options);

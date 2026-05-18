@@ -9,6 +9,7 @@
     "codegen": "npx playwright codegen --load-storage=storageState.json https://admin.dev.global-portal.qburst.build/",
     "codegen:high_ai": "npx playwright codegen --load-storage=storageState.json https://dev.global-portal.qburst.build/login",
     "test:high_ai": "rm -rf reports/high_ai && mkdir -p reports/high_ai && date -u +%Y-%m-%dT%H:%M:%S > src/start-time.txt && npx cucumber-js --tags '@high_ai' --format json:reports/high_ai/cucumber-report.json; date -u +%Y-%m-%dT%H:%M:%S > src/end-time.txt",
+    "test:tag": "npx cucumber-js --tags",
     "report:html": "npx ts-node --transpile-only src/helper/report/report.ts"
   },
   "keywords": [],

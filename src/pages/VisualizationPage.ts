@@ -11,7 +11,9 @@ export class VisualizationPage extends BasePage {
         const popupPromise = this.page.waitForEvent('popup');
         await this.page.locator('#platform-card-vis').getByRole('button', { name: 'Get Started' }).click();
         const popup = await popupPromise;
-        await popup.waitForLoadState('domcontentloaded');
+        // Wait for the auth redirect to complete and land on the dashboard
+        await popup.waitForURL('**/dashboard**', { timeout: 60000 });
+        await popup.waitForLoadState('networkidle');
         return popup;
     }
 }
