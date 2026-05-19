@@ -26,21 +26,32 @@ To make the codebase highly maintainable and scalable, we use a hierarchical **P
 ```text
 .
 ├── src
-│   ├── api                         # API utility classes (e.g., SuperAdminApi.ts)
+│   ├── api                         # API client classes
+│   │   ├── SuperAdminApi.ts        # Super Admin API client
+│   │   └── high_ai/
+│   │       └── HighAIApi.ts        # High AI platform API client
 │   ├── features
-│   │   ├── ui                      # Super Admin UI BDD scenarios
-│   │   │   ├── superadmin_login.feature
-│   │   │   ├── superadmin_organizations.feature
-│   │   │   ├── superadmin_users.feature
-│   │   │   ├── superadmin_create_edit_user.feature
-│   │   │   └── superadmin_list_verification.feature
-│   │   ├── api                     # API BDD scenarios
-│   │   │   ├── superadmin_org_api.feature
-│   │   │   └── superadmin_users_roles_api.feature
-│   │   └── high_ai                 # High AI / Visualization platform scenarios
-│   │       ├── login.feature
-│   │       ├── Dashboard.feature
-│   │       └── visualization_nonfunctional.feature
+│   │   ├── high_ai                 # High AI / Visualization platform scenarios
+│   │   │   ├── ui/                 # High AI UI BDD scenarios
+│   │   │   │   ├── login.feature
+│   │   │   │   ├── Dashboard.feature
+│   │   │   │   └── visualization_nonfunctional.feature
+│   │   │   └── api/                # High AI API BDD scenarios
+│   │   │       ├── high_ai_login_api.feature
+│   │   │       ├── high_ai_projects_api.feature
+│   │   │       ├── high_ai_profile_api.feature
+│   │   │       ├── high_ai_llm_config_api.feature
+│   │   │       └── high_ai_rbac_users_api.feature
+│   │   └── superadmin              # Super Admin portal scenarios
+│   │       ├── ui/                 # Super Admin UI BDD scenarios
+│   │       │   ├── superadmin_login.feature
+│   │       │   ├── superadmin_organizations.feature
+│   │       │   ├── superadmin_users.feature
+│   │       │   ├── superadmin_create_edit_user.feature
+│   │       │   └── superadmin_list_verification.feature
+│   │       └── api/                # Super Admin API BDD scenarios
+│   │           ├── superadmin_org_api.feature
+│   │           └── superadmin_users_roles_api.feature
 │   ├── pages                       # Page Object Model classes
 │   │   ├── BasePage.ts
 │   │   ├── LoginPage.ts
@@ -52,10 +63,13 @@ To make the codebase highly maintainable and scalable, we use a hierarchical **P
 │   │   └── high_ai/
 │   │       └── HighAIPage.ts
 │   ├── steps                       # Cucumber step definitions
-│   │   ├── apiSteps.ts
-│   │   ├── highAiSteps.ts
-│   │   ├── visualizationSteps.ts
-│   │   └── superadminCreateEditSteps.ts
+│   │   ├── apiSteps.ts             # Super Admin API steps
+│   │   ├── superadminSteps.ts      # Super Admin UI steps
+│   │   ├── superadminCreateEditSteps.ts
+│   │   ├── superadminOrgCreateEditSteps.ts
+│   │   ├── highAiSteps.ts          # High AI UI steps
+│   │   ├── highAiApiSteps.ts       # High AI API steps
+│   │   └── visualizationSteps.ts   # Visualization Dashboard steps
 │   ├── hooks
 │   │   ├── hooks.ts                # Before/After hooks (screenshot, video, trace)
 │   │   └── world.ts                # CustomWorld definition
@@ -113,6 +127,22 @@ Clears previous reports, records start/end timestamps, and outputs a JSON report
 npm run test:tag -- @T-048
 npm run test:tag -- @dashboard
 npm run test:tag -- @high_ai
+```
+
+### Run all High AI API tests
+
+```bash
+npm run test:tag -- @high_ai_api
+```
+
+### Run a specific High AI API suite
+
+```bash
+npm run test:tag -- @login_api
+npm run test:tag -- @projects_api
+npm run test:tag -- @profile_api
+npm run test:tag -- @llm_config_api
+npm run test:tag -- @rbac_users_api
 ```
 
 ### Generate auth storage state (one-time login)
@@ -196,13 +226,79 @@ Reports are saved to the `reports/` directory and include:
 - Verify Forgot Password page is accessible from login
 - Verify Logout option is visible after successful login
 
-### Super Admin UI (`src/features/ui/`)
+### High AI API (`@high_ai_api`)
+
+#### Auth Login API (`@login_api`)
+
+| Tag        | Scenario                                                          |
+| ---------- | ----------------------------------------------------------------- |
+| @T-HAI-028 | Validate High AI login API returns 201                            |
+| @T-HAI-029 | Validate login response `success` flag is `true`                  |
+| @T-HAI-030 | Validate login response contains a valid JWT token                |
+| @T-HAI-031 | Validate login `user` object has required fields                  |
+| @T-HAI-032 | Validate login `user.userId` is a valid UUID                      |
+| @T-HAI-033 | Validate login `user.email` is a valid email address              |
+| @T-HAI-034 | Validate login `user.status` is `"ACTIVE"`                        |
+| @T-HAI-035 | Validate login response contains a non-empty organizations array  |
+| @T-HAI-036 | Validate each organization has required fields                    |
+| @T-HAI-037 | Validate each organization `orgId` is a valid UUID                |
+| @T-HAI-038 | Validate each organization `orgStatus` is `"ACTIVE"`              |
+| @T-HAI-039 | Validate each organization `platforms` contains nft, ft, vis keys |
+
+#### Projects API (`@projects_api`)
+
+| Tag        | Scenario                                               |
+| ---------- | ------------------------------------------------------ |
+| @T-HAI-001 | Validate projects list API returns 200                 |
+| @T-HAI-002 | Validate projects list API response structure          |
+| @T-HAI-003 | Validate each project has required fields              |
+| @T-HAI-004 | Validate project `source` values are valid             |
+| @T-HAI-005 | Validate project ID is a valid UUID                    |
+| @T-HAI-006 | Validate project timestamps are valid ISO date strings |
+
+#### Profile API (`@profile_api`)
+
+| Tag        | Scenario                                              |
+| ---------- | ----------------------------------------------------- |
+| @T-HAI-007 | Validate profile API returns 200                      |
+| @T-HAI-008 | Validate profile response message                     |
+| @T-HAI-009 | Validate profile `user` object has required fields    |
+| @T-HAI-010 | Validate profile `userId` and `orgId` are valid UUIDs |
+| @T-HAI-011 | Validate profile `role` is a non-empty array          |
+| @T-HAI-012 | Validate profile `email` is a valid email address     |
+
+#### LLM Config API (`@llm_config_api`)
+
+| Tag        | Scenario                                                  |
+| ---------- | --------------------------------------------------------- |
+| @T-HAI-013 | Validate LLM config API returns 200                       |
+| @T-HAI-014 | Validate LLM config response has all required fields      |
+| @T-HAI-015 | Validate LLM config `id` is a valid UUID                  |
+| @T-HAI-016 | Validate LLM config `baseUrl` is a valid URL              |
+| @T-HAI-017 | Validate LLM config `apiKeyMasked` starts with `****`     |
+| @T-HAI-018 | Validate LLM config timestamps are valid ISO date strings |
+
+#### RBAC Users API (`@rbac_users_api`)
+
+| Tag        | Scenario                                                         |
+| ---------- | ---------------------------------------------------------------- |
+| @T-HAI-019 | Validate RBAC users API returns 200                              |
+| @T-HAI-020 | Validate RBAC users `success` flag is `true`                     |
+| @T-HAI-021 | Validate RBAC users response contains users array and totalCount |
+| @T-HAI-022 | Validate RBAC users `totalCount` matches array length            |
+| @T-HAI-023 | Validate each RBAC user has required fields                      |
+| @T-HAI-024 | Validate each RBAC user `globalRole` is a valid value            |
+| @T-HAI-025 | Validate each RBAC user `userId` is a valid UUID                 |
+| @T-HAI-026 | Validate each RBAC user `status` is `"ACTIVE"`                   |
+| @T-HAI-027 | Validate each RBAC user `email` is a valid email address         |
+
+### Super Admin UI (`src/features/superadmin/ui/`)
 
 - Login, organization management (create, edit, suspend, filter, search)
 - User management (create, edit, deactivate, search)
 - List verification scenarios
 
-### API (`src/features/api/`)
+### Super Admin API (`src/features/superadmin/api/`)
 
 - Validate organizations list API
 - Validate users list API

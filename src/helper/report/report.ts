@@ -5,8 +5,8 @@ import * as path from 'path';
 import * as fs from 'fs';
 
 // Define the path for the report directory and JSON file
-const reportDir = path.join(process.cwd(), 'reports', 'high_ai', 'html');
-const jsonFilePath = path.join(process.cwd(), 'reports', 'high_ai');
+const reportDir = path.join(process.cwd(), 'reports', 'html');
+const jsonFilePath = path.join(process.cwd(), 'reports', 'current');
 const startTimePath = path.join(process.cwd(), 'src', 'start-time.txt');
 const endTimePath = path.join(process.cwd(), 'src', 'end-time.txt');
 

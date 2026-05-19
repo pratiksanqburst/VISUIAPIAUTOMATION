@@ -3,6 +3,9 @@ import { chromium, Browser } from '@playwright/test';
 import { CustomWorld } from './world';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 let browser: Browser;
 const STORAGE_STATE_PATH = path.join(process.cwd(), 'storageState.json');
@@ -10,18 +13,18 @@ const STORAGE_STATE_PATH = path.join(process.cwd(), 'storageState.json');
 setDefaultTimeout(30000);
 
 BeforeAll(async function () {
-    browser = await chromium.launch({ 
+    browser = await chromium.launch({
         headless: false,
-        args: ['--no-sandbox', '--disable-setuid-sandbox'] 
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
     });
 });
 
 async function ensureBrowser() {
     if (!browser || !browser.isConnected()) {
         console.log('Browser disconnected. Relaunching...');
-        browser = await chromium.launch({ 
+        browser = await chromium.launch({
             headless: false,
-            args: ['--no-sandbox', '--disable-setuid-sandbox'] 
+            args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
     }
 }
@@ -29,25 +32,25 @@ async function ensureBrowser() {
 Before(async function (this: CustomWorld, scenario) {
     console.log(`\n[SCENARIO START] ${scenario.pickle.name}`);
     await ensureBrowser();
-    
-    const options = fs.existsSync(STORAGE_STATE_PATH) 
-        ? { storageState: STORAGE_STATE_PATH } 
+
+    const options = fs.existsSync(STORAGE_STATE_PATH)
+        ? { storageState: STORAGE_STATE_PATH }
         : {};
-    
+
     const videoDir = path.join(process.cwd(), 'reports/videos', scenario.pickle.name.replace(/\s+/g, '_'));
-    
+
     try {
         this.context = await browser.newContext({
-        ...options,
-        viewport: { width: 1920, height: 1080 },
-        recordVideo: {
-            dir: videoDir,
-            size: { width: 1280, height: 720 }
-        }
-    });
+            ...options,
+            viewport: { width: 1920, height: 1080 },
+            recordVideo: {
+                dir: videoDir,
+                size: { width: 1280, height: 720 }
+            }
+        });
 
         await this.context.tracing.start({ screenshots: true, snapshots: true, sources: true });
-    
+
         this.page = await this.context.newPage();
     } catch (error) {
         console.error('Failed to create browser context or page:', error);
@@ -70,7 +73,7 @@ After(async function (this: CustomWorld, scenario) {
     this.attach(`Trace saved at: ${tracePath}`, 'text/plain');
 
     await this.page?.close();
-    
+
     const video = this.page?.video();
     if (video) {
         try {
@@ -85,7 +88,7 @@ After(async function (this: CustomWorld, scenario) {
     }
 
     await this.context?.storageState({ path: STORAGE_STATE_PATH });
-    
+
     await this.context?.close();
 });
 

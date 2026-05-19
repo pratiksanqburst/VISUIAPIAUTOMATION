@@ -63,3 +63,4 @@ Then('each organization in the list should have valid data', async function () {
         expect(org).to.have.property('status');
     });
 });
+
