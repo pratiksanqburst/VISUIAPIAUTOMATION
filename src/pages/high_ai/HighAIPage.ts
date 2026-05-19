@@ -36,6 +36,30 @@ export class HighAIPage extends BasePage {
         await this.page.getByRole('button', { name: 'Login' }).click();
     }
 
+    async isForgotPasswordLinkVisible() {
+        await expect(this.page.getByRole('button', { name: 'Forgot?' })).toBeVisible();
+    }
+
+    async clickForgotPasswordLink() {
+        await this.page.getByRole('button', { name: 'Forgot?' }).click();
+    }
+
+    async verifyForgotPasswordPage() {
+        await expect(this.page.getByRole('heading', { name: 'Forgot Password' })).toBeVisible();
+    }
+
+    async verifyOTPEmailInputVisible() {
+        await expect(this.page.getByPlaceholder('you@example.com')).toBeVisible();
+    }
+
+    async verifySendOTPButtonVisible() {
+        await expect(this.page.getByRole('button', { name: 'Send OTP' })).toBeVisible();
+    }
+
+    async verifyLogoutVisible() {
+        await expect(this.page.getByText('Logout')).toBeVisible();
+    }
+
     async getValidationMessage(message: string) {
         const root = this.page.locator('#root');
         await expect(root).toContainText(message);

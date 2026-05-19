@@ -28,3 +28,18 @@ Feature: High AI Visualization Login
     And I click Login without entering credentials
     Then I should see validation message "Email is required!"
     And I should see validation message "Password is required!"
+
+  @high_ai1
+  Scenario: Verify Forgot Password page is accessible from login
+    When I open the High AI login page
+    Then the Forgot Password link should be visible
+    When I click the Forgot Password link
+    Then the Forgot Password page should be displayed
+    And the OTP email input field should be visible
+    And the Send OTP button should be visible
+
+  @high_ai1
+  Scenario: Verify Logout option is visible after successful login to Visualization dashboard
+    When I navigate to the High AI portal
+    And I select the "Visualisation" platform
+    Then the Logout option should be visible on the dashboard

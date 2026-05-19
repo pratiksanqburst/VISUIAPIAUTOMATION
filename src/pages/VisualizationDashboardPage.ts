@@ -40,7 +40,7 @@ export class VisualizationDashboardPage extends BasePage {
     }
 
     async verifyAdminPanelHeading(heading: string) {
-        await expect(this.page.locator('h1')).toContainText(heading);
+        await expect(this.page.getByRole('heading', { name: heading }).first()).toBeVisible();
     }
 
     async verifyAdminPanelColumns(columns: string[]) {
@@ -139,5 +139,123 @@ export class VisualizationDashboardPage extends BasePage {
     async rootContains(text: string) {
         const content = await this.root.textContent();
         return content ? content.includes(text) : false;
+    }
+
+    async selectNonFunctionalCategory(category: string) {
+        await this.page.getByRole('button', { name: category }).click();
+        await this.page.waitForLoadState('networkidle');
+        await this.page.waitForTimeout(2000);
+    }
+
+    async verifyNonFunctionalKPIs(kpis: string[]) {
+        for (const kpi of kpis) {
+            console.log(`Verifying non-functional KPI: ${kpi}`);
+            await expect(this.root).toContainText(kpi);
+        }
+    }
+
+    async verifyDownloadReportButtonVisible() {
+        await expect(this.page.getByRole('button', { name: 'Download Report' })).toBeVisible();
+    }
+
+    async verifyShareLinkButtonVisible() {
+        await expect(this.page.getByRole('button', { name: 'Share Link' })).toBeVisible();
+    }
+
+    async openLLMConfiguration() {
+        await this.page.locator('div').filter({ hasText: /^Settings$/ }).nth(2).click();
+        await this.page.getByText('LLM Configuration').click();
+        await this.page.waitForLoadState('networkidle');
+    }
+
+    async verifyLLMConfigurationColumns(columns: string[]) {
+        for (const col of columns) {
+            console.log(`Verifying LLM config column: ${col}`);
+            await expect(this.page.getByRole('columnheader', { name: col })).toBeVisible();
+        }
+    }
+
+    async verifyEditDeleteButtonsVisible() {
+        await expect(this.page.getByRole('button', { name: 'Edit' })).toBeVisible();
+        await expect(this.page.getByRole('button', { name: 'Delete' })).toBeVisible();
+    }
+
+    async openProjectManagement() {
+        await this.page.locator('div').filter({ hasText: /^Settings$/ }).nth(2).click();
+        await this.page.getByText('Project Management').click();
+        await this.page.waitForLoadState('networkidle');
+    }
+
+    async verifyProjectManagementSections(sections: string[]) {
+        for (const section of sections) {
+            console.log(`Verifying Project Management section: ${section}`);
+            await expect(this.root).toContainText(section);
+        }
+    }
+
+    async verifyDashboardOverviewMetrics(metrics: string[]) {
+        for (const metric of metrics) {
+            console.log(`Verifying dashboard overview metric: ${metric}`);
+            await expect(this.root).toContainText(metric);
+        }
+    }
+
+    async verifyBuildFilterDropdownsVisible() {
+        console.log('Verifying build filter dropdowns are visible...');
+        await expect(this.page.getByRole('combobox').nth(3)).toBeVisible();
+        await expect(this.page.getByRole('combobox').nth(4)).toBeVisible();
+    }
+
+    async verifyBuildsFilterOptions(options: string[]) {
+        for (const option of options) {
+            console.log(`Verifying builds filter option: ${option}`);
+            await expect(this.root).toContainText(option);
+        }
+    }
+
+    async verifyNonFunctionalAISummarySections(sections: string[]) {
+        for (const section of sections) {
+            console.log(`Verifying Non-Functional AI Summary section: ${section}`);
+            await expect(this.root).toContainText(section);
+        }
+    }
+
+    async verifyNonFunctionalFilterLabels(labels: string[]) {
+        for (const label of labels) {
+            console.log(`Verifying Non-Functional filter label: ${label}`);
+            await expect(this.root).toContainText(label);
+        }
+    }
+
+    async verifyTestSuiteDropdownVisible() {
+        await expect(this.page.locator('select[name="testSuite"]')).toBeVisible();
+    }
+
+    async verifyFilterPlaceholderVisible(placeholder: string) {
+        await expect(this.root).toContainText(placeholder);
+    }
+
+    async verifyKPITooltipDescriptions(tooltips: string[]) {
+        // Info icon buttons (SVG icons) next to each KPI card trigger tooltips on hover
+        const infoIconButtons = this.page.locator('button').filter({ has: this.page.locator('svg') });
+        for (let i = 0; i < tooltips.length; i++) {
+            console.log(`Hovering over info icon ${i + 1} to reveal tooltip: ${tooltips[i]}`);
+            await infoIconButtons.nth(i).hover();
+            await this.page.waitForTimeout(500);
+            await expect(this.page.getByText(tooltips[i]).first()).toBeVisible({ timeout: 5000 });
+        }
+    }
+
+    async clickFunctionalTestingInfoIcon() {
+        await this.page.getByRole('img', { name: 'This is the default project for functional testing. It can be changed under the' }).click();
+        await this.page.waitForTimeout(300);
+    }
+
+    async verifyProjectInfoTooltipText(text: string) {
+        await expect(this.page.locator('[id="_r_0_"]')).toContainText(text);
+    }
+
+    async verifyNonFunctionalInfoIconVisible() {
+        await expect(this.page.getByRole('img', { name: 'This is the default project for non-functional testing. It can be changed under' })).toBeVisible();
     }
 }

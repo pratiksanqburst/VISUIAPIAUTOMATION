@@ -99,3 +99,39 @@ Then('the URL should contain {string}', async function (this: CustomWorld, expec
     console.log(`Current URL: ${actualUrl}`);
     expect(actualUrl).toContain(expectedPath);
 });
+
+Then('the Forgot Password link should be visible', async function (this: CustomWorld) {
+    const highAiPage = new HighAIPage(this.page!);
+    console.log('Verifying Forgot Password link is visible...');
+    await highAiPage.isForgotPasswordLinkVisible();
+});
+
+When('I click the Forgot Password link', async function (this: CustomWorld) {
+    const highAiPage = new HighAIPage(this.page!);
+    console.log('Clicking Forgot Password link...');
+    await highAiPage.clickForgotPasswordLink();
+});
+
+Then('the Forgot Password page should be displayed', async function (this: CustomWorld) {
+    const highAiPage = new HighAIPage(this.page!);
+    console.log('Verifying Forgot Password page heading...');
+    await highAiPage.verifyForgotPasswordPage();
+});
+
+Then('the OTP email input field should be visible', async function (this: CustomWorld) {
+    const highAiPage = new HighAIPage(this.page!);
+    console.log('Verifying OTP email input field...');
+    await highAiPage.verifyOTPEmailInputVisible();
+});
+
+Then('the Send OTP button should be visible', async function (this: CustomWorld) {
+    const highAiPage = new HighAIPage(this.page!);
+    console.log('Verifying Send OTP button...');
+    await highAiPage.verifySendOTPButtonVisible();
+});
+
+Then('the Logout option should be visible on the dashboard', async function (this: CustomWorld) {
+    const highAiPage = new HighAIPage(this.page!);
+    console.log('Verifying Logout option is visible...');
+    await highAiPage.verifyLogoutVisible();
+});

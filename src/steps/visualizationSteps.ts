@@ -158,3 +158,136 @@ Then('the search field {string} should be visible', async function (this: Custom
     const dashboard = new VisualizationDashboardPage(this.page!);
     await dashboard.verifySearchFieldVisible(placeholder);
 });
+
+When('I navigate to the Non-Functional Testing dashboard', async function (this: CustomWorld) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    console.log('Navigating to Non-Functional Testing dashboard...');
+    await dashboard.openNonFunctionalTesting();
+});
+
+When('I select the non-functional category {string}', async function (this: CustomWorld, category: string) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    console.log(`Selecting non-functional category: ${category}`);
+    await dashboard.selectNonFunctionalCategory(category);
+});
+
+Then('I should see the following non-functional KPIs:', async function (this: CustomWorld, dataTable: any) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    const kpis: string[] = dataTable.raw().flat().slice(1);
+    console.log('Verifying non-functional KPIs:', kpis);
+    await dashboard.verifyNonFunctionalKPIs(kpis);
+});
+
+Then('the Download Report button should be visible', async function (this: CustomWorld) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    console.log('Verifying Download Report button is visible...');
+    await dashboard.verifyDownloadReportButtonVisible();
+});
+
+Then('the Share Link button should be visible', async function (this: CustomWorld) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    console.log('Verifying Share Link button is visible...');
+    await dashboard.verifyShareLinkButtonVisible();
+});
+
+When('I navigate to LLM Configuration via Settings', async function (this: CustomWorld) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    console.log('Navigating to LLM Configuration...');
+    await dashboard.openLLMConfiguration();
+});
+
+Then('the LLM Configuration table should have the following columns:', async function (this: CustomWorld, dataTable: any) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    const columns: string[] = dataTable.raw().flat().slice(1);
+    console.log('Verifying LLM Configuration columns:', columns);
+    await dashboard.verifyLLMConfigurationColumns(columns);
+});
+
+Then('the Edit and Delete action buttons should be visible', async function (this: CustomWorld) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    console.log('Verifying Edit and Delete buttons...');
+    await dashboard.verifyEditDeleteButtonsVisible();
+});
+
+When('I navigate to Project Management via Settings', async function (this: CustomWorld) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    console.log('Navigating to Project Management...');
+    await dashboard.openProjectManagement();
+});
+
+Then('the Project Management page should contain the following sections:', async function (this: CustomWorld, dataTable: any) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    const sections: string[] = dataTable.raw().flat().slice(1);
+    console.log('Verifying Project Management sections:', sections);
+    await dashboard.verifyProjectManagementSections(sections);
+});
+
+Then('I should see the following dashboard overview metrics:', async function (this: CustomWorld, dataTable: any) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    const metrics: string[] = dataTable.raw().flat().slice(1);
+    console.log('Verifying dashboard overview metrics:', metrics);
+    await dashboard.verifyDashboardOverviewMetrics(metrics);
+});
+
+Then('the build filter dropdowns should be visible', async function (this: CustomWorld) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    await dashboard.verifyBuildFilterDropdownsVisible();
+});
+
+Then('the builds filter should contain the following options:', async function (this: CustomWorld, dataTable: any) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    const options: string[] = dataTable.raw().flat().slice(1);
+    console.log('Verifying builds filter options:', options);
+    await dashboard.verifyBuildsFilterOptions(options);
+});
+
+Then('the Non-Functional AI Summary panel should display the following sections:', async function (this: CustomWorld, dataTable: any) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    const sections: string[] = dataTable.raw().flat().slice(1);
+    console.log('Verifying Non-Functional AI Summary sections:', sections);
+    await dashboard.verifyNonFunctionalAISummarySections(sections);
+});
+
+Then('the Non-Functional Testing filter labels should be visible:', async function (this: CustomWorld, dataTable: any) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    const labels: string[] = dataTable.raw().flat().slice(1);
+    console.log('Verifying Non-Functional filter labels:', labels);
+    await dashboard.verifyNonFunctionalFilterLabels(labels);
+});
+
+Then('the test suite dropdown filter should be visible', async function (this: CustomWorld) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    console.log('Verifying test suite dropdown is visible...');
+    await dashboard.verifyTestSuiteDropdownVisible();
+});
+
+Then('the filter placeholder {string} should be visible', async function (this: CustomWorld, placeholder: string) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    console.log(`Verifying filter placeholder: ${placeholder}`);
+    await dashboard.verifyFilterPlaceholderVisible(placeholder);
+});
+
+Then('the following KPI tooltip descriptions should be visible on the dashboard:', async function (this: CustomWorld, dataTable: any) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    const tooltips: string[] = dataTable.raw().flat().slice(1);
+    console.log('Verifying KPI tooltip descriptions:', tooltips);
+    await dashboard.verifyKPITooltipDescriptions(tooltips);
+});
+
+When('I click the functional testing project info icon', async function (this: CustomWorld) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    console.log('Clicking functional testing project info icon...');
+    await dashboard.clickFunctionalTestingInfoIcon();
+});
+
+Then('the project info tooltip should contain {string}', async function (this: CustomWorld, text: string) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    console.log(`Verifying project info tooltip contains: ${text}`);
+    await dashboard.verifyProjectInfoTooltipText(text);
+});
+
+Then('the non-functional testing project info icon should be visible', async function (this: CustomWorld) {
+    const dashboard = new VisualizationDashboardPage(this.page!);
+    console.log('Verifying non-functional testing project info icon is visible...');
+    await dashboard.verifyNonFunctionalInfoIconVisible();
+});
