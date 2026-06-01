@@ -10,9 +10,9 @@ export class HighAIApi {
     private static sharedContext: APIRequestContext | null = null;
     private static initPromise: Promise<APIRequestContext> | null = null;
 
-    private readonly BASE_URL    = 'https://api.dev.visual.qburst.build';
-    private readonly PORTAL_URL  = 'https://api.dev.global-portal.qburst.build';
-    private readonly PORTAL_APP  = 'https://dev.global-portal.qburst.build';
+    private readonly BASE_URL = 'https://api.dev.visual.qburst.build';
+    private readonly PORTAL_URL = 'https://api.dev.global-portal.qburst.build';
+    private readonly PORTAL_APP = 'https://dev.global-portal.qburst.build';
     private readonly STORAGE_STATE_PATH = path.join(process.cwd(), 'storageState.json');
 
     private getCachedVizCookie(): string | null {
@@ -31,7 +31,7 @@ export class HighAIApi {
     }
 
     private async getFreshVizCookie(): Promise<string> {
-        const email    = process.env.VIS_EMAIL    || '';
+        const email = process.env.VIS_EMAIL || '';
         const password = process.env.VIS_PASSWORD || '';
         if (!email || !password) {
             throw new Error('HighAIApi: VIS_EMAIL and VIS_PASSWORD must be set in .env');
@@ -40,7 +40,7 @@ export class HighAIApi {
         console.log('HighAIApi: viz_access_token expired — refreshing via headless browser login...');
         const browser = await chromium.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] });
         const context = await browser.newContext();
-        const page    = await context.newPage();
+        const page = await context.newPage();
 
         try {
             // Step 1: Log into the portal
@@ -125,6 +125,79 @@ export class HighAIApi {
         return await context.get('/api/rbac/users');
     }
 
+    // ─── NFR (Non-Functional Testing) API ──────────────────────────────────────
+
+    async getNFRSummary(projectId: string) {
+        const context = await this.getRequestContext();
+        return await context.get(`/api/projects/${projectId}/nfr/summary`);
+    }
+
+    // ─── Layers API (NFR & Functional) ─────────────────────────────────────────
+
+    async getLayers(projectId: string) {
+        const context = await this.getRequestContext();
+        return await context.get(`/api/layers/project/${projectId}`);
+    }
+
+    // ─── Functional Execution Metrics API ──────────────────────────────────────
+
+    async getFunctionalExecutionMetrics(executionId: string, projectId: string) {
+        const context = await this.getRequestContext();
+        return await context.get(`/api/functional/executions/metrics?id=${executionId}&projectId=${projectId}`);
+    }
+
+    // ─── Functional Quality Summary API ────────────────────────────────────────
+
+    async getFunctionalQualitySummary(executionId: string, projectId: string) {
+        const context = await this.getRequestContext();
+        return await context.get(`/api/quality-summary?functionalExecutionId=${executionId}&functionalProjectId=${projectId}`);
+    }
+
+    async getNFRQualitySummary(executionId: string, projectId: string) {
+        const context = await this.getRequestContext();
+        return await context.get(`/api/quality-summary?nfrExecutionId=${executionId}&nfrProjectId=${projectId}`);
+    }
+
+    async getNFRPerformance(executionId: string, projectId: string) {
+        const context = await this.getRequestContext();
+        return await context.get(`/api/nfr/executions/performance?id=${executionId}&projectId=${projectId}`);
+    }
+
+    async getNFRLinkValidation(executionId: string, projectId: string) {
+        const context = await this.getRequestContext();
+        return await context.get(`/api/nfr/executions/link-validation?id=${executionId}&projectId=${projectId}`);
+    }
+
+    async getNFRSeo(executionId: string, projectId: string) {
+        const context = await this.getRequestContext();
+        return await context.get(`/api/nfr/executions/seo?id=${executionId}&projectId=${projectId}`);
+    }
+
+    async getNFRVisual(executionId: string, projectId: string) {
+        const context = await this.getRequestContext();
+        return await context.get(`/api/nfr/executions/visual?id=${executionId}&projectId=${projectId}`);
+    }
+
+    async getRRICalculate(functionalId: string, functionalProjectId: string, nfrProjectId: string) {
+        const context = await this.getRequestContext();
+        return await context.get(`/api/rri/calculate?functionalId=${functionalId}&functionalProjectId=${functionalProjectId}&nfrProjectId=${nfrProjectId}`);
+    }
+
+    // ─── Share Report API ───────────────────────────────────────────────────────
+
+    async postShareReport(executionId: string, projectId: string, projectName: string) {
+        const context = await this.getRequestContext();
+        return await context.post('/api/reports/share', {
+            data: {
+                executionId,
+                projectId,
+                testType: 'functional',
+                testSelected: ['functional'],
+                projectName,
+            },
+        });
+    }
+
     async login(email: string, password: string) {
         const portalContext = await request.newContext({
             baseURL: 'https://api.dev.global-portal.qburst.build',
@@ -138,11 +211,41 @@ export class HighAIApi {
         });
     }
 
+    // ─── Negative Test Helpers ──────────────────────────────────────────────────
+
+    async getLayersWithoutAuth(projectId: string) {
+        const noAuthContext = await request.newContext({
+            baseURL: this.BASE_URL,
+            extraHTTPHeaders: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+        });
+        return await noAuthContext.get(`/api/layers/project/${encodeURIComponent(projectId)}`);
+    }
+
+    async getLayersWithInvalidToken(projectId: string, token: string) {
+        const customContext = await request.newContext({
+            baseURL: this.BASE_URL,
+            extraHTTPHeaders: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+                'Cookie': `viz_access_token=${token}`,
+            },
+        });
+        return await customContext.get(`/api/layers/project/${encodeURIComponent(projectId)}`);
+    }
+
+    async sendLayersRequest(projectId: string, method: string) {
+        const context = await this.getRequestContext();
+        return await context.fetch(`/api/layers/project/${encodeURIComponent(projectId)}`, { method });
+    }
+
     async dispose() {
         if (HighAIApi.sharedContext) {
             await HighAIApi.sharedContext.dispose();
             HighAIApi.sharedContext = null;
-            HighAIApi.initPromise   = null;
+            HighAIApi.initPromise = null;
         }
     }
 }

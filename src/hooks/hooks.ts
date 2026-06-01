@@ -10,9 +10,20 @@ dotenv.config();
 let browser: Browser;
 const STORAGE_STATE_PATH = path.join(process.cwd(), 'storageState.json');
 
-setDefaultTimeout(30000);
+setDefaultTimeout(90000);
 
 BeforeAll(async function () {
+    // Clean up stale traces and videos from previous runs
+    const tracesDir = path.join(process.cwd(), 'reports/traces');
+    const videosDir = path.join(process.cwd(), 'reports/videos');
+
+    for (const dir of [tracesDir, videosDir]) {
+        if (fs.existsSync(dir)) {
+            fs.rmSync(dir, { recursive: true, force: true });
+        }
+        fs.mkdirSync(dir, { recursive: true });
+    }
+
     browser = await chromium.launch({
         headless: false,
         args: ['--no-sandbox', '--disable-setuid-sandbox']

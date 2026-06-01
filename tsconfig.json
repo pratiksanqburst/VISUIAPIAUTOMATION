@@ -9,6 +9,7 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "types": ["node"],
     "baseUrl": ".",
     "rootDir": "src",
     "ignoreDeprecations": "6.0",
@@ -16,5 +17,5 @@
       "*": ["node_modules/*", "src/*"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "playwright.config.ts"]
 }
